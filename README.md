@@ -112,6 +112,50 @@ O terminal vai mostrar dois endereços:
 
 ---
 
+## 🖥️ (Opcional) Monitores virtuais — setup estilo *spacedesk*
+
+Por padrão, você captura janelas/apps que já estão no seu monitor. Mas dá pra ir além: criar
+**monitores virtuais** (telas extras *headless*, sem painel físico) e jogar os apps neles. Assim
+o cockpit 3D fica no seu monitor real enquanto os apps "moram" em telas off-screen dedicadas —
+você os vê no 3D e os controla com mouse/teclado nativos, **sem nunca sair do cockpit**.
+
+Isso usa um **driver de display virtual (IddCx)**. O mais usado e gratuito é o
+**Virtual Display Driver (VDD)**, controlado pelo app **VDC (Virtual Driver Control)**.
+
+> ⚠️ É um **driver de kernel** — exige permissão de administrador e um reboot. Instale por sua
+> conta e risco. Desinstale o VDD **antes** de atualizar drivers de GPU (evita tela preta).
+
+### Instalação do VDD/VDC
+1. Instale o app de controle (PowerShell **como Administrador**):
+   ```powershell
+   winget install --id=VirtualDrivers.Virtual-Display-Driver -e
+   ```
+   > Precisa do **Microsoft Visual C++ Redistributable** (já vem na maioria dos PCs).
+   > Alternativa: baixar o **VDC** na [página de releases](https://github.com/VirtualDrivers/Virtual-Display-Driver/releases).
+2. **Reinicie o PC.**
+3. Abra o **VDD Control**:
+   ```
+   "%LOCALAPPDATA%\Microsoft\WinGet\Links\VDD Control.exe"
+   ```
+   (ou procure por *VDD Control* no menu Iniciar)
+4. Clique em **Install Driver** e aprove o UAC — isso cria o adaptador de vídeo virtual.
+
+### Criar e usar os monitores
+5. Ainda no VDC, defina **quantos monitores virtuais** quer (ex.: 4) e deixe-os **habilitados**
+   (também dá pra editar `C:\VirtualDisplayDriver\vdd_settings.xml`). A tela pode piscar — normal.
+6. Confirme que apareceram (na pasta `holo-screens`):
+   ```powershell
+   powershell -File "server\winbridge.ps1" -Action monitors
+   ```
+   Você deve ver `DISPLAY2`, `DISPLAY3`… além do seu monitor real.
+7. **Mova os apps** para os monitores virtuais (`Win`+`Shift`+`←`/`→`, ou arrastando) e
+   **capture cada monitor** numa tela do cockpit (painel **Tela N ▸ capturar** → escolha o monitor).
+
+> ℹ️ Como o Windows tem uma única fila de input, você controla **um monitor por vez** (igual a
+> uma área de trabalho estendida normal) — perfeito pra olhar tudo no 3D e interagir com um foco.
+
+---
+
 ## 🏗️ Como funciona
 
 ```
