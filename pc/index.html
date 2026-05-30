@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Holo-Screens · Monitor</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; background: #05070d; }
+    canvas { display: block; }
+    #hud {
+      position: fixed; top: 16px; left: 16px; z-index: 5;
+      font: 14px/1.5 system-ui, sans-serif; color: #9fd8ff;
+      background: rgba(5, 15, 30, 0.65); border: 1px solid #14406040;
+      padding: 12px 14px; border-radius: 10px; max-width: 320px;
+      backdrop-filter: blur(6px); pointer-events: none;
+    }
+    #hud b { color: #33ddff; }
+    #status { color: #ffd27f; }
+    kbd {
+      background: #12283f; border: 1px solid #1d4a6e; border-radius: 4px;
+      padding: 1px 6px; font-family: monospace; color: #cdeeff;
+    }
+    #setup {
+      position: fixed; top: 16px; right: 16px; width: 240px; z-index: 5;
+      font: 13px/1.4 system-ui, sans-serif; color: #9fd8ff;
+      background: rgba(5, 15, 30, 0.65); border: 1px solid #14406040;
+      padding: 12px 14px; border-radius: 10px; backdrop-filter: blur(6px);
+    }
+    #setup .h { color: #33ddff; font-weight: 600; margin-bottom: 8px; }
+    #setupBtns { display: flex; flex-direction: column; gap: 6px; }
+    .screenRow { display: flex; gap: 6px; align-items: center; }
+    .screenRow.over { outline: 1px dashed #33ddff; outline-offset: 2px; }
+    .screenRow.dragging { opacity: 0.45; }
+    .capBtn {
+      flex: 1; text-align: left; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid #1d4a6e; background: #0e2438; color: #cdeeff;
+      cursor: grab; font: 13px system-ui, sans-serif;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .capBtn:hover { background: #16344f; }
+    .capBtn.filled { border-color: #2e7d32; background: #10301a; color: #bdf5c4; }
+    .rmBtn {
+      width: 28px; padding: 8px 0; border-radius: 8px;
+      border: 1px solid #5a2a2a; background: #2a1010; color: #ff9a9a; cursor: pointer;
+    }
+    .rmBtn:hover { background: #3a1616; }
+    .addBtn {
+      padding: 8px; border-radius: 8px; border: 1px dashed #2e6a8e;
+      background: transparent; color: #9fd8ff; cursor: pointer; font: 13px system-ui, sans-serif;
+    }
+    .addBtn:hover { background: #0e2438; }
+    #picker {
+      position: fixed; inset: 0; display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 8px;
+      background: rgba(2, 8, 16, 0.85); z-index: 10; padding: 24px;
+    }
+    #picker .title { color: #33ddff; font: 16px system-ui, sans-serif; margin-bottom: 8px; }
+    #pickerList { display: flex; flex-direction: column; gap: 6px; max-height: 70vh;
+      overflow: auto; width: min(560px, 92vw); }
+    #pickerList button, #pickerCancel {
+      font: 14px system-ui, sans-serif; text-align: left;
+      padding: 10px 12px; border-radius: 8px; border: 1px solid #1d4a6e;
+      background: #0e2438; color: #cdeeff; cursor: pointer;
+    }
+    #pickerCancel { text-align: center; color: #9fd8ff; margin-top: 8px; }
+    #pickerList button:hover { background: #16344f; }
+    #splash {
+      position: fixed; inset: 0; z-index: 100;
+      background: #03040a; color: #33ddff;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-family: ui-monospace, Consolas, monospace; transition: opacity 0.7s ease;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+    #splash .ttl { font-size: 13px; letter-spacing: 8px; color: #9fd8ff; margin-bottom: 18px; }
+    #asciiArt {
+      font-size: 7px; line-height: 7px; white-space: pre; margin: 0 0 22px;
+      color: #33ddff; text-shadow: 0 0 6px rgba(51, 221, 255, 0.5);
+    }
+    #splash .bar { width: 340px; height: 6px; background: #10243a; border-radius: 3px; overflow: hidden; }
+    #splash .bar > i { display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, #33ddff, #66ffcc); transition: width 0.25s ease; }
+    #splash .msg { margin-top: 12px; font-size: 12px; color: #6fa8c8; height: 16px; letter-spacing: 1px; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="splash">
+    <div class="ttl">H O L O · S C R E E N S</div>
+    <pre id="asciiArt"></pre>
+    <div class="bar"><i id="loadFill"></i></div>
+    <div class="msg" id="loadMsg">inicializando…</div>
+  </div>
+  <div id="hud">
+    <b>Holo-Screens</b><br />
+    Status: <span id="status">aguardando celular…</span><br />
+    <br />
+    Celular: abra <b>/phone</b> e toque em <b>Ativar sensores</b>.<br />
+    Duplo-clique numa tela = capturar app + associar janela.<br />
+    Tela em destaque (laranja) = a central. <kbd>Enter</kbd> entra nela.<br />
+    <kbd>G</kbd> giroscópio/mouse · <kbd>F</kbd> webcam (rosto) · <kbd>R</kbd> recentraliza.<br />
+    <kbd>H</kbd> esconde HUD · <kbd>B</kbd> tema · <kbd>C</kbd> chuva 🌧️<br />
+    <kbd>Tab</kbd> <span id="modeTag" style="color:#6fa8c8">🧭 navegar</span> — clicar em vídeos/sites
+  </div>
+  <div id="setup">
+    <div class="h">Criar / capturar telas</div>
+    <div style="font-size:11px;color:#5a8aaa;margin-bottom:8px">arraste p/ reordenar · × remove · + adiciona</div>
+    <div id="setupBtns"></div>
+  </div>
+  <div id="picker">
+    <div class="title">Associe esta tela a uma janela (pro controle):</div>
+    <div id="pickerList"></div>
+    <button id="pickerCancel">cancelar (só visual, sem controle)</button>
+  </div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# dependências
+node_modules/
+
+# certificado HTTPS gerado automaticamente na 1ª execução
+server/certs/
+
+# logs e temporários
+*.log
+out.log
+err.log
+
+# SO / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

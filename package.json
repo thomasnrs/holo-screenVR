@@ -1,0 +1,13 @@
+{
+  "name": "holo-screens",
+  "version": "0.1.0",
+  "description": "Telas-holograma virtuais navegadas pelo giroscopio do celular, renderizadas no monitor do PC.",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "selfsigned": "^2.4.1",
+    "ws": "^8.18.0"
+  }
+}

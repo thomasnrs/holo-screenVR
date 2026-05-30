@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Holo-Screens · Controle</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-user-select: none; user-select: none; }
+    html, body { height: 100%; background: #05070d; color: #cdeeff;
+      font-family: system-ui, sans-serif; overflow: hidden; }
+    #pad {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; touch-action: none;
+      background: radial-gradient(circle at 50% 40%, #0c2238 0%, #05070d 70%);
+    }
+    #pad .hint { color: #4d7ea5; font-size: 14px; padding: 0 30px; }
+    #bar, #bar2 {
+      position: absolute; left: 0; right: 0;
+      display: flex; gap: 10px; padding: 10px 14px;
+      background: rgba(5, 15, 30, 0.7); backdrop-filter: blur(6px);
+    }
+    #bar { bottom: 0; }
+    #bar2 { bottom: 66px; }
+    button {
+      flex: 1; padding: 16px 8px; font-size: 15px; font-weight: 600;
+      color: #05070d; background: #33ddff; border: 0; border-radius: 12px;
+    }
+    button.ghost { background: #12283f; color: #9fd8ff; }
+    #status {
+      position: absolute; top: 14px; left: 0; right: 0; text-align: center;
+      font-size: 13px; color: #ffd27f;
+    }
+    #start { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 70%; max-width: 320px; padding: 22px; font-size: 18px; }
+    #sens { position: absolute; bottom: 132px; left: 0; right: 0; display: none;
+      padding: 8px 16px; background: rgba(5,15,30,0.7); backdrop-filter: blur(6px); }
+    #sens label { font-size: 13px; color: #9fd8ff; display: block; margin-bottom: 4px; }
+    #sens input { width: 100%; accent-color: #33ddff; }
+  </style>
+</head>
+<body>
+  <div id="status">conectando…</div>
+  <div id="pad">
+    <div class="hint">Mova o celular para olhar em volta.<br />Pinça com 2 dedos = zoom.</div>
+  </div>
+  <button id="start">Ativar sensores</button>
+  <div id="sens">
+    <label>Sensibilidade: <span id="sensVal">2.5</span>x</label>
+    <input id="sensRange" type="range" min="1" max="5" step="0.1" value="2.5" />
+  </div>
+  <div id="bar" style="display:none">
+    <button id="enter">Entrar na tela ▸</button>
+    <button id="cockpit" class="ghost">◂ Cockpit</button>
+  </div>
+  <div id="bar2" style="display:none">
+    <button id="recenter" class="ghost">Recentralizar</button>
+    <button id="mode" class="ghost">Modo: Giroscópio</button>
+  </div>
+  <script type="module" src="./control.js"></script>
+</body>
+</html>
