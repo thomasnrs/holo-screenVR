@@ -14,6 +14,16 @@ cabeça, com zoom, foco e efeito de brilho ambiente (ambilight).
 
 ---
 
+## 📸 Demonstração
+
+O ambiente virtual em ação — telas-holograma dispostas em 3D ao redor do usuário:
+
+![Holo-Screens VR — visão do cockpit 3D](docs/preview-1.png)
+
+![Holo-Screens VR — telas flutuantes no ambiente virtual](docs/preview-2.png)
+
+---
+
 ## ✨ Funcionalidades
 
 - 🖥️ **Telas em 3D** — quantas quiser (até 8), dispostas num arco/cilindro ao seu redor.
